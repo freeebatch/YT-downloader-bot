@@ -65,13 +65,13 @@ image_urls = [
 @bot.on_message(filters.command(["help"]))
 async def txt_handler(client: Client, m: Message):
     await bot.send_message(m.chat.id, text= (
-        "<pre><code>Congrats! You are using 𝙎𝘼𝙄𝙉𝙄 𝘽𝙊𝙏𝙎:</code></pre>\n┣\n"
+        "Congrats! You are using 𝙎𝘼𝙄𝙉𝙄 𝘽𝙊𝙏𝙎:\n┣\n"
         "┣⪼01. Send /start - To Check Bot \n┣\n"
         "┣⪼02. Send /logs - To see Bot Working Logs\n┣\n"
         "┣⪼03. Send /cookies - To update YT cookies.\n┣\n"
         "┣⪼04. Send /stop - Stop the Running Task. 🚫\n┣\n"
-        "┣⪼🔗  Direct Send Link For Extract (with https://)\n┣\n"
-        "<pre><code>If you have any questions, feel free to ask! 💬</code></pre>"
+        "┣⪼🔗  Direct Send Link(with https://)\n┣\n"
+        "If you have any questions, feel free to ask! 💬"
         )
     ) 
 
@@ -114,7 +114,7 @@ async def cookies_handler(client: Client, m: Message):
 async def start_command(bot: Client, message: Message):
     random_image_url = random.choice(image_urls)
     caption = (
-        f"🌟 Welcome {0}! 🌟\n\n➽ I am Powerful YouTube Uploader Bot 📥\n\n➽ 𝐔𝐬𝐞 /help for use this Bot.\n\n𝐌𝐚𝐝𝐞 𝐁𝐲 : 𝙎𝘼𝙄𝙉𝙄 𝘽𝙊𝙏𝙎 🦁"
+        f"🌟 Welcome Boss🦁! 🌟\n\n➽ I am Powerful YouTube Uploader Bot 📥\n\n➽ 𝐔𝐬𝐞 /help for use this Bot.\n\n𝐌𝐚𝐝𝐞 𝐁𝐲 : 𝙎𝘼𝙄𝙉𝙄 𝘽𝙊𝙏𝙎 🦁"
     )
     
     await bot.send_photo(
@@ -154,7 +154,7 @@ async def text_handler(bot: Client, m: Message):
     editable = await m.reply_text(f"<pre><code>**🔹Processing your link...\n🔁Please wait...⏳**</code></pre>")
     await m.delete()
 
-    await editable.edit("<pre><code>╭━━━━❰ᴇɴᴛᴇʀ ʀᴇꜱᴏʟᴜᴛɪᴏɴ❱━━➣ </code></pre>\n┣━━⪼ send `144`  for 144p\n┣━━⪼ send `240`  for 240p\n┣━━⪼ send `360`  for 360p\n┣━━⪼ send `480`  for 480p\n┣━━⪼ send `720`  for 720p\n┣━━⪼ send `1080` for 1080p\n┣━━⪼ send `mp3` for MP3 format\n<pre><code>╰━━⌈⚡[`🦋🇸‌🇦‌🇮‌🇳‌🇮‌🦋`]⚡⌋━━➣ </code></pre>")
+    await editable.edit("╭━━━━❰ᴇɴᴛᴇʀ ʀᴇꜱᴏʟᴜᴛɪᴏɴ❱━━➣ \n┣━━⪼ send `144`  for 144p\n┣━━⪼ send `240`  for 240p\n┣━━⪼ send `360`  for 360p\n┣━━⪼ send `480`  for 480p\n┣━━⪼ send `720`  for 720p\n┣━━⪼ send `1080` for 1080p\n┣━━⪼ send `mp3` for MP3 format\n╰━━⌈⚡[`🦋🇸‌🇦‌🇮‌🇳‌🇮‌🦋`]⚡⌋━━➣ ")
     input2: Message = await bot.listen(editable.chat.id, filters=filters.text & filters.user(m.from_user.id))
     raw_text2 = input2.text
     quality = f"{raw_text2}p"
@@ -184,18 +184,23 @@ async def text_handler(bot: Client, m: Message):
     else:
         ytf = f"b[height<={raw_text2}][ext=mp4]/bv[height<={raw_text2}][ext=mp4]+ba[ext=m4a]/b[ext=mp4]"
 
-    await editable.edit("🌅Send ☞ `Thumb URL` for **Thumbnail**\n\n🎞️Send ☞ `no` for **video** format\n\n📁Send ☞ `No` for **Document** format")
-    input6 = message = await bot.listen(editable.chat.id, filters=filters.text & filters.user(m.from_user.id))
+    await editable.edit(f"01. 🌅Send ☞ Direct **Thumb Photo**\n\n"
+                        f"02. 🔗Send ☞ `Thumb URL` for **Thumbnail**\n\n"
+                        f"03. 🎞️Send ☞ `no` for **video** format\n\n"
+                        f"04. 📁Send ☞ `No` for **Document** format")
+    input6 = message = await bot.listen(editable.chat.id)
     raw_text6 = input6.text
     await input6.delete(True)
     await editable.delete()
 
-    thumb = input6.text
-    if thumb.startswith("http://") or thumb.startswith("https://"):
-        getstatusoutput(f"wget '{thumb}' -O 'thumb.jpg'")
+    thumb = input6
+    if input6.photo:
+        thumb = await input6.download()
+    elif raw_text6.startswith("http://") or raw_text6.startswith("https://"):
+        getstatusoutput(f"wget '{raw_text6}' -O 'thumb.jpg'")
         thumb = "thumb.jpg"
     else:
-        thumb == "no"
+        thumb = raw_text6
 
     count = 1
     arg = 1
@@ -213,7 +218,7 @@ async def text_handler(bot: Client, m: Message):
         if "youtube.com" in url or "youtu.be" in url:
             if raw_text2.lower() == "mp3":
                 cmd = f'yt-dlp --cookies youtube_cookies.txt -f "{ytf}" "{url}" -o "{name}.mp3"'
-                cc = f'🎵𝐓𝐢𝐭𝐥𝐞 » `{name}` .mp3\n🔗𝐋𝐢𝐧𝐤 » <a href="{link}">__**Click Here to Listen**__</a>\n\n🌟𝐄𝐱𝐭𝐫𝐚𝐜𝐭𝐞𝐝 𝐁𝐲 𝙎𝘼𝙄𝙉𝙄 𝘽𝙊𝙏𝙎'
+                cc = f'🎵𝐓𝐢𝐭𝐥𝐞 » `{name}` .mp3\n🔗𝐋𝐢𝐧𝐤 » <a href="{link}">__**Click Here to Listen**__</a>\n\n🌟𝐄𝐱𝐭𝐫𝐚𝐜𝐭𝐞𝐝 𝐁𝐲 : 𝙎𝘼𝙄𝙉𝙄 𝘽𝙊𝙏𝙎'
                 print(f"Running command: {cmd}")
                 os.system(cmd)
                 if os.path.exists(f'{name}.mp3'):
@@ -229,7 +234,7 @@ async def text_handler(bot: Client, m: Message):
                     
             else:
                 cmd = f'yt-dlp --cookies youtube_cookies.txt -f "{ytf}" "{url}" -o "{name}.mp4"'
-                cc = f'🎞️𝐓𝐢𝐭𝐥𝐞 » `{name}` .mp4\n🔗𝐋𝐢𝐧𝐤 » <a href="{link}">__**Click Here to Watch Stream**__</a>\n\n🌟𝐄𝐱𝐭𝐫𝐚𝐜𝐭𝐞𝐝 𝐁𝐲 𝙎𝘼𝙄𝙉𝙄 𝘽𝙊𝙏𝙎'
+                cc = f'🎞️𝐓𝐢𝐭𝐥𝐞 » `{name}` .mp4\n🔗𝐋𝐢𝐧𝐤 » <a href="{link}">__**Click Here to Watch Stream**__</a>\n\n🌟𝐄𝐱𝐭𝐫𝐚𝐜𝐭𝐞𝐝 𝐁𝐲 : 𝙎𝘼𝙄𝙉𝙄 𝘽𝙊𝙏𝙎'
                 emoji_message = await show_random_emojis(message)
                 Show = f"**⚡Dᴏᴡɴʟᴏᴀᴅ Sᴛᴀʀᴛᴇᴅ...⏳**\n\n🔗𝐋𝐢𝐧𝐤 » {link}\n\n✦𝐁𝐨𝐭 𝐌𝐚𝐝𝐞 𝐁𝐲 ✦ 𝙎𝘼𝙄𝙉𝙄 𝘽𝙊𝙏𝙎"
                 prog = await m.reply_text(Show, disable_web_page_preview=True)
@@ -242,7 +247,7 @@ async def text_handler(bot: Client, m: Message):
                 time.sleep(1)
 
     except Exception as e:
-        Error = f"⚠️𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐢𝐧𝐠 𝐈𝐧𝐭𝐞𝐫𝐮𝐩𝐭𝐞𝐝\n\n📚𝐓𝐢𝐭𝐥𝐞 » `{name}`\n\n🔗𝐋𝐢𝐧𝐤 » ⚡<a href='{link}'>__**Click Here to Watch Stream**__</a>\n\n✦𝐁𝐨𝐭 𝐌𝐚𝐝𝐞 𝐁𝐲 ✦ 𝙎𝘼𝙄𝙉𝙄 𝘽𝙊𝙏𝙎"
+        Error = f"⚠️𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐢𝐧𝐠 𝐈𝐧𝐭𝐞𝐫𝐮𝐩𝐭𝐞𝐝\n\n🎞️𝐓𝐢𝐭𝐥𝐞 » `{name}`\n\n🔗𝐋𝐢𝐧𝐤 » ⚡<a href='{link}'>__**Click Here to Watch Stream**__</a>\n\n✦𝐁𝐨𝐭 𝐌𝐚𝐝𝐞 𝐁𝐲 ✦ 𝙎𝘼𝙄𝙉𝙄 𝘽𝙊𝙏𝙎"
         await m.reply_text(Error, disable_web_page_preview=True)
         pass
 
